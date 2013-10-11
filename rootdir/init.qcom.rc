@@ -162,9 +162,6 @@ on boot
 
     chown root system /proc/net/ip_conntrack
 
-    # WTF
-    chmod 666 /proc/cmdline
-
     # Enable DEBUG_SUSPEND, DEBUG_EXIT_SUSPEND, and DEBUG_WAKEUP
     write /sys/module/wakelock/parameters/debug_mask 7
 
@@ -199,11 +196,6 @@ on boot
     write /proc/sys/net/netfilter/nf_conntrack_tcp_be_liberal 1
 
     exec /system/bin/cal_data_manager init
-
-# Assign TCP buffer thresholds to be ceiling value of technology maximums
-# Increased technology maximums should be reflected here.
-    write /proc/sys/net/core/rmem_max 2097152
-    write /proc/sys/net/core/wmem_max 2097152
 
 # msm specific files that need to be created on /data
 on post-fs-data
@@ -517,7 +509,7 @@ service netmgrd /system/bin/netmgrd
 service kickstart /system/bin/qcks l -r /data/tombstones/mdm/
     class core
     user system
-    group system
+    group system radio
     disabled
     oneshot
 
@@ -527,7 +519,7 @@ service qrngd /system/bin/qrngd -f
     group root
 
 service qseecomd /system/bin/qseecomd
-    class late_start
+    class core
     user system
     group system
 
