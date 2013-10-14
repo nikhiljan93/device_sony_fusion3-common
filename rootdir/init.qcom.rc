@@ -65,6 +65,7 @@ on fs
     start tad
     exec /sbin/wait4tad_static
     exec /system/bin/taimport
+    restorecon -R /data/etc
 
 on early-boot
     # set RLIMIT_MEMLOCK to 64MB
@@ -459,6 +460,7 @@ service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
     class late_start
     user bluetooth
     group qcom_oncrpc bluetooth net_bt_admin system net_bt_stack
+    seclabel u:r:bluetooth_loader:s0
     disabled
     oneshot
 
@@ -511,6 +513,7 @@ service kickstart /system/bin/qcks l -r /data/tombstones/mdm/
     user system
     group system radio
     disabled
+    seclabel u:r:kickstart:s0
     oneshot
 
 service qrngd /system/bin/qrngd -f
@@ -551,7 +554,7 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     #   user wifi
     #   group wifi inet keystore
     class main
-    socket wpa_wlan0 dgram 660 wifi wifi
+    socket wpa_wlan0 dgram 660 wifi wifi u:object_r:wpa_socket:s0
     disabled
     oneshot
 
@@ -566,7 +569,7 @@ service p2p_supplicant /system/bin/wpa_supplicant \
 #   user wifi
 #   group wifi inet keystore
     class main
-    socket wpa_wlan0 dgram 660 wifi wifi
+    socket wpa_wlan0 dgram 660 wifi wifi u:object_r:wpa_socket:s0
     disabled
     oneshot
 
@@ -639,3 +642,8 @@ service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     group system qcom_oncrpc
     disabled
     oneshot
+
+service illumination /system/bin/illumination_service
+    socket illumination stream 0660 root system
+    class main
+    user root
