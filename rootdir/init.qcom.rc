@@ -214,6 +214,10 @@ on boot
 
 # msm specific files that need to be created on /data
 on post-fs-data
+
+    # sysinit service
+    start sysinit	
+
     mkdir /data/media 0770 media_rw media_rw
 
     # Create the directories used by the Wireless subsystem
@@ -657,6 +661,11 @@ service dis_msm_therm /system/bin/sh /system/etc/disable_msm_thermal.sh
 
 service mpdecision /system/bin/mpdecision --no_sleep --avg_comp
     class main
+   disabled
+
+on property:persist.kernel.ext=1
+   start thermald
+   start mpdecision
 
 # bugreport is triggered by holding down volume down, volume up and power
 service bugreport /system/bin/dumpstate -d -p -B \
